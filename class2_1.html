@@ -1,0 +1,156 @@
+    <style>
+        .input-con {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+        .input-container {
+            margin: 20px;
+            background-color: #B9DEEF;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);
+        }
+
+        input[type="text"] {
+            border: 2px solid #58ACFA;
+            border-radius: 5px;
+            padding: 5px;
+            margin-right: 10px;
+        }
+
+        button {
+            background-color: #58ACFA;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #084B8A;
+        }
+
+        #container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 300px; /* 각 숫자의 너비를 고려하여 계산 */
+            padding: 10px;
+        }
+
+        .number {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 5px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            border: 2px solid #ddd;
+            color: #333;
+            font-weight: bold;
+            opacity: 0.7;
+        }
+
+        .prime {
+            background-color: #81BEF7;
+            border-color: #0174DF;
+            animation: fadeIn 1s;
+            opacity: 1;
+        }
+      
+        .non-prime {
+            position: relative;
+            animation: fadeOut 1s;
+            opacity: 0.4;
+        }
+
+        .non-prime::after {
+            content: 'X';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            font-size: 30px;
+            color: #ff6666;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 0.7; }
+            to { opacity: 0.4; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0.7; }
+            to { opacity: 1; }
+        }
+
+        #result {
+            font-size: 17px;
+            color: #58ACFA;
+            margin-top: 5px;
+        }
+    </style>
+<div class="input-con">
+    <div class="input-container">
+        <input type="text" id="numListInput" placeholder="숫자 목록 입력 (예: 1, 3, 5, 7)">
+        <button onclick="countAndVisualizePrimes()">소수 찾기</button>
+    </div>
+    <div id="container"></div>
+    <div id="result"></div>
+    <script>
+        function sieveOfEratosthenes(maxNum) {
+            const a = [false, false].concat(new Array(maxNum - 1).fill(true));
+            for (let i = 2; i <= maxNum; i++) {
+                if (a[i]) {
+                    for (let j = 2 * i; j <= maxNum; j += i) {
+                        a[j] = false;
+                    }
+                }
+            }
+            return a;
+        }
+
+        function countAndVisualizePrimes() {
+            const container = document.getElementById('container');
+            container.innerHTML = ''; // 컨테이너 초기화
+
+            const numList = document.getElementById('numListInput').value.split(',').map(Number);
+            const maxNum = Math.max(...numList);
+            const isPrime = sieveOfEratosthenes(maxNum);
+            let primeCount = 0;
+
+            numList.forEach((num, index) => {
+                const numberElement = document.createElement('div');
+                numberElement.classList.add('number');
+                numberElement.textContent = num;
+
+                container.appendChild(numberElement);
+
+                setTimeout(() => {
+                    if (isPrime[num]) {
+                        numberElement.classList.add('prime');
+                        primeCount++;
+                    } else {
+                        numberElement.classList.add('non-prime');
+                    }
+
+                    // 마지막 숫자에 대한 처리가 끝나면 결과를 표시
+                    if (index === numList.length - 1) {
+                        document.getElementById('result').textContent = `입력된 숫자 중 소수의 개수: ${primeCount}`;
+                    }
+                }, index * 200); // 시각화 지연 효과
+            });
+        }
+    </script>
+</div>
