@@ -155,5 +155,17 @@
         // DOM 로드 시 및 창 크기 변경 시 높이 업데이트
         window.onload = updateHeight;
         window.onresize = updateHeight;
+
+    function calcHeight() {
+            var the_height =
+                document.getElementById('iframe').contentWindow.
+            document.body.scrollHeight;
+
+            document.getElementById('iframe').height =
+                the_height;
+
+            document.getElementById('iframe').style.overflow = "hidden";
+        }
+        calcHeight()
     </script>
 </div>
