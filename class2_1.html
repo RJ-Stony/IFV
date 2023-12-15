@@ -1,3 +1,82 @@
+<div class="input-con">
+    <div class="input-container">
+        <input type="text" id="numListInput" placeholder="숫자 목록 입력 (예: 1,3,5,7)">
+        <button onclick="countAndVisualizePrimes()">소수 찾기</button>
+    </div>
+    <div id="container"></div>
+    <div id="result"></div>
+    
+    <script>
+        function sieveOfEratosthenes(maxNum) {
+            const a = [false, false].concat(new Array(maxNum - 1).fill(true));
+            for (let i = 2; i <= maxNum; i++) {
+                if (a[i]) {
+                    for (let j = 2 * i; j <= maxNum; j += i) {
+                        a[j] = false;
+                    }
+                }
+            }
+            return a;
+        }
+        
+        function updateHeight() {
+            const height = document.documentElement.scrollHeight;
+            window.parent.postMessage({
+                frameHeight: height
+            }, '*');
+        }
+        
+        function countAndVisualizePrimes() {
+            const container = document.getElementById('container');
+            container.innerHTML = ''; // 컨테이너 초기화
+
+            const numList = document.getElementById('numListInput').value.split(',').map(Number);
+            const maxNum = Math.max(...numList);
+            const isPrime = sieveOfEratosthenes(maxNum);
+            let primeCount = 0;
+
+            numList.forEach((num, index) => {
+                const numberElement = document.createElement('div');
+                numberElement.classList.add('number');
+                numberElement.textContent = num;
+
+                container.appendChild(numberElement);
+
+                setTimeout(() => {
+                    if (isPrime[num]) {
+                        numberElement.classList.add('prime');
+                        primeCount++;
+                    } else {
+                        numberElement.classList.add('non-prime');
+                    }
+
+                    // 마지막 숫자에 대한 처리가 끝나면 결과를 표시
+                    if (index === numList.length - 1) {
+                        document.getElementById('result').textContent = `입력된 숫자 중 소수의 개수: ${primeCount}`;
+                        updateHeight(); // 결과 표시 후 높이 업데이트
+                    }
+                }, index * 200); // 시각화 지연 효과
+            });
+        }
+
+        // DOM 로드 시 및 창 크기 변경 시 높이 업데이트
+        window.onload = updateHeight;
+        window.onresize = updateHeight;
+
+    function calcHeight() {
+            var the_height =
+                document.getElementById('iframe').contentWindow.
+            document.body.scrollHeight;
+
+            document.getElementById('iframe').height =
+                the_height;
+
+            document.getElementById('iframe').style.overflow = "hidden";
+        }
+        calcHeight()
+    </script>
+</div>
+
 <style>
     .input-con {
         margin: 0;
@@ -90,82 +169,3 @@
         margin-top: 5px;
     }
 </style>
-
-<div class="input-con">
-    <div class="input-container">
-        <input type="text" id="numListInput" placeholder="숫자 목록 입력 (예: 1,3,5,7)">
-        <button onclick="countAndVisualizePrimes()">소수 찾기</button>
-    </div>
-    <div id="container"></div>
-    <div id="result"></div>
-    
-    <script>
-        function sieveOfEratosthenes(maxNum) {
-            const a = [false, false].concat(new Array(maxNum - 1).fill(true));
-            for (let i = 2; i <= maxNum; i++) {
-                if (a[i]) {
-                    for (let j = 2 * i; j <= maxNum; j += i) {
-                        a[j] = false;
-                    }
-                }
-            }
-            return a;
-        }
-        
-        function updateHeight() {
-            const height = document.documentElement.scrollHeight;
-            window.parent.postMessage({
-                frameHeight: height
-            }, '*');
-        }
-        
-        function countAndVisualizePrimes() {
-            const container = document.getElementById('container');
-            container.innerHTML = ''; // 컨테이너 초기화
-
-            const numList = document.getElementById('numListInput').value.split(',').map(Number);
-            const maxNum = Math.max(...numList);
-            const isPrime = sieveOfEratosthenes(maxNum);
-            let primeCount = 0;
-
-            numList.forEach((num, index) => {
-                const numberElement = document.createElement('div');
-                numberElement.classList.add('number');
-                numberElement.textContent = num;
-
-                container.appendChild(numberElement);
-
-                setTimeout(() => {
-                    if (isPrime[num]) {
-                        numberElement.classList.add('prime');
-                        primeCount++;
-                    } else {
-                        numberElement.classList.add('non-prime');
-                    }
-
-                    // 마지막 숫자에 대한 처리가 끝나면 결과를 표시
-                    if (index === numList.length - 1) {
-                        document.getElementById('result').textContent = `입력된 숫자 중 소수의 개수: ${primeCount}`;
-                        updateHeight(); // 결과 표시 후 높이 업데이트
-                    }
-                }, index * 200); // 시각화 지연 효과
-            });
-        }
-
-        // DOM 로드 시 및 창 크기 변경 시 높이 업데이트
-        window.onload = updateHeight;
-        window.onresize = updateHeight;
-
-    function calcHeight() {
-            var the_height =
-                document.getElementById('iframe').contentWindow.
-            document.body.scrollHeight;
-
-            document.getElementById('iframe').height =
-                the_height;
-
-            document.getElementById('iframe').style.overflow = "hidden";
-        }
-        calcHeight()
-    </script>
-</div>
